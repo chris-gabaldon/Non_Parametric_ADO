@@ -8,7 +8,7 @@ from priors import*
 
 #%% Loading the experimental data into dataframes
 
-df_session = pd.read_csv('df_session_finla.csv')       # Dataframe containing information about each participant's session.
+df_session = pd.read_csv('df_session_final.csv')       # Dataframe containing information about each participant's session.
 df_trial = pd.read_csv('df_trial_final.csv')           # Dataframe containing information about each trial.
 
 #%% Data Filtering
@@ -93,11 +93,11 @@ for i in range(num_subj):
 
 # Average values and curve plotting.
 list_probs = np.mean(np.array(list_probs_per_subject), axis=0)
-plt.title('Curva ground truth')
-plt.scatter(d_plotted, list_probs, label = 'Promedio todos los sujetos', color = 'orangered')
-plt.xlabel('Promedio números', fontsize=12)
+stds_subjects=np.std(np.array(list_probs_per_subject), axis=0)/np.sqrt(num_subj)
+plt.errorbar(d_plotted, 1-list_probs, yerr=stds_subjects,label = 'Mean across all subjects', color = 'orangered')
+plt.xlabel('Design: List average', fontsize=12)
 plt.xticks(d_plotted)
-plt.ylabel('Probabilidad de detectar $prom$ > $50$', fontsize=12)
+plt.ylabel('Probability of response $avg$ < $50$', fontsize=12)
 plt.grid()
 plt.legend()
 plt.show()
@@ -207,7 +207,7 @@ plt.show()
 
 '''
 The following function generates a list of probability curves, 
-estimating the Bayesian variables, for a list of 
+estimating trought the bayesian posterior heatmap, for a list of 
 subjects with the characteristics of the data_subj ones 
 defined above.
 '''
@@ -245,7 +245,8 @@ curves for each experimental group.
 '''
 list_probs_per_subject_bay_ni = generate_prob_per_subject_type_bay(data_subj_ni,1)
 list_probs_per_subject_bay_g = generate_prob_per_subject_type_bay(data_subj_g,2)
-list_probs_per_subject_bay_random = generate_prob_per_subject_type_bay(data_subj_random,2)
+list_probs_per_subject_bay_random = generate_prob_per_subject_type_bay(data_subj_random,1)
+list_probs_per_subject_bay_random_g = generate_prob_per_subject_type_bay(data_subj_random,2)
 
 # Calculating the mean of each list of Bayesian probability curves.
 means_ni = np.mean(np.array(list_probs_per_subject_bay_ni), axis=0)
@@ -295,7 +296,7 @@ plt.show()
 '''
 The following function calculates the MSEs of an 
 experimental group as a function of trials using
-both the Bayesian and frequentist probabilities.
+both the Bayesian and frequentist inferences.
 '''
 
 def calculate_mse(data_subj, list_probs_fre,list_probs_bay ,d, prior_type):
@@ -372,7 +373,8 @@ def calculate_mse(data_subj, list_probs_fre,list_probs_bay ,d, prior_type):
 d = np.unique(np.concatenate([ni_trials['d1'], g_trials['d1'], random_trials['d1']]))
 list_mses_ran_fre_ni,list_mses_ran_bay_ni = calculate_mse(data_subj_ni, list_probs_per_subject_ni,list_probs_per_subject_bay_ni, d,1) #ado_type1=ni , 2gaussian
 list_mses_ran_fre_g ,list_mses_ran_bay_g= calculate_mse(data_subj_g, list_probs_per_subject_g,list_probs_per_subject_bay_g, d,2)
-list_mses_ran_fre_random,list_mses_ran_bay_random= calculate_mse(data_subj_random, list_probs_per_subject_random,list_probs_per_subject_bay_random, d,2)
+list_mses_ran_fre_random,list_mses_ran_bay_random= calculate_mse(data_subj_random, list_probs_per_subject_random,list_probs_per_subject_bay_random, d,1)
+list_mses_ran_fre_random,list_mses_ran_bay_random_g= calculate_mse(data_subj_random, list_probs_per_subject_random,list_probs_per_subject_bay_random_g, d,2)
 
 std_mses_random=np.std(list_mses_ran_fre_random,axis=0)/np.sqrt(len(list_mses_ran_fre_random))
 std_mses_ni=np.std(list_mses_ran_fre_ni,axis=0)/np.sqrt(len(list_mses_ran_fre_ni))
@@ -391,28 +393,25 @@ ni_inf=np.abs(-np.log10(np.mean(list_mses_ran_fre_ni, axis=0)+std_mses_ni)+mean_
 g_sup=np.abs(np.log10(np.mean(list_mses_ran_fre_g, axis=0)+std_mses_g)-mean_tr_g)
 g_inf=np.abs(-np.log10(np.mean(list_mses_ran_fre_g, axis=0)+std_mses_g)+mean_tr_g)
 
-# Plotting the MSEs for each experimental group with frequentist estimations.
-plt.errorbar(range(len(list_mses_ran_fre_ni[0])), np.log10(np.mean(list_mses_ran_fre_ni, axis=0)),yerr=[ni_inf,ni_sup],label='ADO (NI prior)',c='b')
-plt.errorbar(range(len(list_mses_ran_fre_g[0])),np.log10( np.mean(list_mses_ran_fre_g, axis=0)),yerr=[g_inf,g_sup],label='ADO (Gaussian prior)',c='c')
-plt.errorbar(range(len(list_mses_ran_fre_random[0])), np.log10(np.mean(list_mses_ran_fre_random, axis=0)),yerr=[rand_inf,rand_sup],label='Random ',c='r')
 
 
-plt.xlabel('Trials')
-plt.ylabel('log(MSE)')
-plt.legend()
-plt.show()
 
 ## bayesian estimation curves
 std_mses_random_b=np.std(list_mses_ran_bay_random,axis=0)/np.sqrt(len(list_mses_ran_bay_random))
+std_mses_random_b_g=np.std(list_mses_ran_bay_random_g,axis=0)/np.sqrt(len(list_mses_ran_bay_random_g))
 std_mses_ni_b=np.std(list_mses_ran_bay_ni,axis=0)/np.sqrt(len(list_mses_ran_bay_ni))
 std_mses_g_b=np.std(list_mses_ran_bay_g,axis=0)/np.sqrt(len(list_mses_ran_bay_g))
 
 mean_tr_ni_b=np.log10(np.mean(list_mses_ran_bay_ni, axis=0))
 mean_tr_g_b=np.log10( np.mean(list_mses_ran_bay_g, axis=0))
 mean_tr_r_b=np.log10(np.mean(list_mses_ran_bay_random, axis=0))
+mean_tr_r_b_g=np.log10(np.mean(list_mses_ran_bay_random_g, axis=0))
 
 rand_sup_b=np.abs(np.log10(np.mean(list_mses_ran_bay_random, axis=0)+std_mses_random_b)-mean_tr_r_b)
 rand_inf_b=np.abs(-np.log10(np.mean(list_mses_ran_bay_random, axis=0)+std_mses_random_b)+mean_tr_r_b)
+rand_sup_b_g=np.abs(np.log10(np.mean(list_mses_ran_bay_random_g, axis=0)+std_mses_random_b_g)-mean_tr_r_b_g)
+rand_inf_b_g=np.abs(-np.log10(np.mean(list_mses_ran_bay_random_g, axis=0)+std_mses_random_b_g)+mean_tr_r_b_g)
+
 
 ni_sup_b=np.abs(np.log10(np.mean(list_mses_ran_bay_ni, axis=0)+std_mses_ni_b)-mean_tr_ni_b)
 ni_inf_b=np.abs(-np.log10(np.mean(list_mses_ran_bay_ni, axis=0)+std_mses_ni_b)+mean_tr_ni_b)
@@ -421,67 +420,85 @@ g_sup_b=np.abs(np.log10(np.mean(list_mses_ran_bay_g, axis=0)+std_mses_g_b)-mean_
 g_inf_b=np.abs(-np.log10(np.mean(list_mses_ran_bay_g, axis=0)+std_mses_g_b)+mean_tr_g_b)
 
 
-# Plotting the MSEs for each experimental group with bayesian estimations.
-plt.errorbar(range(len(list_mses_ran_bay_ni[0])), np.log10(np.mean(list_mses_ran_bay_ni, axis=0)),yerr=[ni_inf_b,ni_sup_b],label='ADO (NI prior) - bay',c='orange')
-plt.errorbar(range(len(list_mses_ran_bay_g[0])),np.log10( np.mean(list_mses_ran_bay_g, axis=0)),yerr=[g_inf_b,g_sup_b],label='ADO (Gaussian prior) -bay',c='green')
-plt.errorbar(range(len(list_mses_ran_bay_random[0])), np.log10(np.mean(list_mses_ran_bay_random, axis=0)),yerr=[rand_inf_b,rand_sup_b],label='Random -bay',c='m')
 
 
-plt.xlabel('Trials')
-plt.ylabel('log(MSE)')
-plt.legend()
+fig, axes = plt.subplots(1, 2, figsize=(12, 5), sharey=True)
 
-#%% Histograms
+# Subplot 1: Bayesian estimations
+axes[0].set_title('Bayesian estimation', fontsize=14)
+axes[0].errorbar(range(len(list_mses_ran_bay_ni[0])), np.log10(np.mean(list_mses_ran_bay_ni, axis=0)),
+                  yerr=[ni_inf_b, ni_sup_b], label='ADO (NI prior) ', c='b')
+axes[0].errorbar(range(len(list_mses_ran_bay_g[0])), np.log10(np.mean(list_mses_ran_bay_g, axis=0)),
+                  yerr=[g_inf_b, g_sup_b], label='ADO (Gaussian prior) ', c='green')
+axes[0].errorbar(range(len(list_mses_ran_bay_random[0])), np.log10(np.mean(list_mses_ran_bay_random, axis=0)),
+                  yerr=[rand_inf_b, rand_sup_b], label='Random  (NI prior)', c='r')
+axes[0].errorbar(range(len(list_mses_ran_bay_random_g[0])), np.log10(np.mean(list_mses_ran_bay_random_g, axis=0)),
+                  yerr=[rand_inf_b_g, rand_sup_b_g], label='Random (Gaussian prior)', c='m')
+axes[0].set_xlabel('Trials', fontsize=14)
+axes[0].set_ylabel('log(MSE)', fontsize=14)
+axes[0].tick_params(axis='both', labelsize=14)
+axes[0].legend(fontsize=12)
 
-'''
-This function plots vertical histograms for the design measurements
-for a list of portions of df_trial. The number of bins is set at 20.
-'''
+# Subplot 2: Frequentist estimations
+axes[1].set_title('Frequentist estimation', fontsize=14)
+axes[1].errorbar(range(len(list_mses_ran_fre_ni[0])), np.log10(np.mean(list_mses_ran_fre_ni, axis=0)),
+                  yerr=[ni_inf, ni_sup], label='ADO (NI prior)', c='b')
+axes[1].errorbar(range(len(list_mses_ran_fre_g[0])), np.log10(np.mean(list_mses_ran_fre_g, axis=0)),
+                  yerr=[g_inf, g_sup], label='ADO (Gaussian prior)', c='g')
+axes[1].errorbar(range(len(list_mses_ran_fre_random[0])), np.log10(np.mean(list_mses_ran_fre_random, axis=0)),
+                  yerr=[rand_inf, rand_sup], label='Random', c='r')
+axes[1].set_xlabel('Trials', fontsize=14)
+axes[1].tick_params(axis='both', labelsize=14)
+axes[1].legend(fontsize=12)
 
-def plot_histograms_vertical(df_list, labels, colors, bins=20):
-    
-    num_histograms = len(df_list)
-    fig, axes = plt.subplots(num_histograms, 1, figsize=(8, 4 * num_histograms), sharex=True)
-    
+plt.tight_layout()
+plt.show()
+
+
+#%%histogram
+
+def plot_grouped_histograms_absolute(df_list, labels, colors, d_plotted):
+    bins = np.arange(len(d_plotted) + 1) - 0.5  
+    width = 0.18
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+
     for i, (df, label, color) in enumerate(zip(df_list, labels, colors)):
         participants = df['participant_id'].unique()
+        N = len(participants)
         histograms = []
-        
-        # Calculating the histogram for each participant.
+
         for participant in participants:
-            d1_values = df[df['participant_id'] == participant]['d1']
-            hist, edges = np.histogram(d1_values, bins=bins, range=(df['d1'].min(), df['d1'].max()))
+            values = df[df['participant_id'] == participant]['d1'].astype(int)
+            hist, _ = np.histogram(values, bins=bins)
             histograms.append(hist)
-        
-        # Calculating the mean of the histograms.
-        avg_histogram = np.mean(histograms, axis=0)
-        bin_centers = (edges[:-1] + edges[1:]) / 2  # Calculating the bin centers.
-        
-        N = len(participants)                       # Number of participants.
-        # Plotting the average histogram.
-        axes[i].bar(bin_centers, avg_histogram, color=color, width=np.diff(edges), alpha=0.7, label=f'{label} (N={N})', edgecolor='black')
-        
-        # Sub-plot configuration
-        axes[i].set_title(f'Distribución de d1 - {label} (N={N})', fontsize=14)
-        axes[i].set_ylabel('Frecuencia promedio', fontsize=12)
-        axes[i].legend()
-        axes[i].grid(axis='y', linestyle='--', alpha=0.7)
-    
-    # General configuration.
-    axes[-1].set_xlabel('d', fontsize=12)  # Only the last graphic is labelled X.
+
+        histograms = np.array(histograms)
+        mean_hist = np.mean(histograms, axis=0)
+        std_error = np.std(histograms, axis=0, ddof=1) / np.sqrt(N)
+
+        offset = (i - 1) * width
+        positions = np.arange(len(d_plotted)) + offset
+
+        ax.bar(positions, mean_hist, yerr=std_error, width=width,
+               label=f'{label} (N={N})', color=color, alpha=0.8,
+               edgecolor='black', capsize=5)
+
+    ax.set_xlabel('Design : Average of the list', fontsize=14)
+    ax.set_ylabel('Counts', fontsize=14)
+    ax.set_xticks(np.arange(len(d_plotted)))
+    ax.set_xticklabels(d_plotted, fontsize=14)
+    ax.tick_params(axis='y', labelsize=14)
+    ax.legend(fontsize=12)
+    ax.grid(axis='y', linestyle='--', alpha=0.5)
     plt.tight_layout()
     plt.show()
 
-# Sample usage - uncomment the following lines to plot the histograms of the experiment.
 
-plot_histograms_vertical(
-    df_list=[ni_trials, g_trials,random_trials],
-    labels=['NI','G', 'R' ],
-    colors=['blue','cyan', 'red' ],
-    bins=20
-)
-
-
+plot_grouped_histograms_absolute(
+    df_list=[ni_trials, g_trials, random_trials],
+    labels=['ADO (NI Prior)', 'ADO (Gaussian Prior)', 'Random'],
+    colors=['blue', 'green', 'red'],d_plotted=d_plotted)
 
 
 
