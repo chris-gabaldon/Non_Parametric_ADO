@@ -13,8 +13,7 @@ class Experiment:
         self.k = 100 # number of likelihood points
         k = self.k
         n = self.n
-        
-        # borre esto para probar el parrafo de abajo, lo mismo en el metodo generate
+
         # minSize = 1/(k - 1)
         # v = [i*minSize for i in range(math.ceil(1/minSize)+1)] # likelihood values (v_i in the manuscript)
         # v[0] = eps # to avoid log(0)
