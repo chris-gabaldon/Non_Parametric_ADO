@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+    {% load static %}
+
+<head>
+    <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Experimento ADO</title>
+    <style>
+        :root {
+            font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+            line-height: 1.5;
+            font-weight: 400;
+            color-scheme: light dark;
+            color: rgba(255, 255, 255, 0.87);
+            background-color: #111111;
+            font-synthesis: none;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-width: 320px;
+            min-height: 100vh;
+            background-color: #222133;
+            color: rgba(255, 255, 255, 0.87);
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 3.2em;
+            line-height: 1.1;
+            color: #fff;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 1.8em;
+            color: #ddd;
+            margin-bottom: 40px;
+        }
+
+        hr {
+            width: 50%;
+            border-color: #535bf2;
+            margin-bottom: 40px;
+            opacity: 0; 
+            animation: fadeIn 1s forwards;
+        }
+
+        label {
+            font-size: 1.1em; /* Tamaño de fuente ligeramente mayor para que sea legible */
+            color: #fff; /* Color de texto claro, para contraste sobre fondo oscuro */
+            margin-bottom: 8px;
+            display: block; /* Asegura que el label ocupe toda la línea y no se apile con otros elementos */
+            text-align: left; /* Alineación a la izquierda */
+            width: 100%; /* Asegura que el label ocupe todo el ancho disponible en pantallas grandes */
+        }
+
+        /* Estilo para los botones */
+
+        .boton-continuar:active {
+            background-color: #4344d1;
+        }
+
+        /* Agregar una animación de desvanecimiento para el formulario */
+        form {
+            opacity: 0;
+            animation: fadeIn 0s forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes grow { to { width: 50%; /* Ancho final */ } }
+        .boton-continuar {
+         background-color: blue;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        }
+
+        .boton-continuar:hover {
+        background-color: darkblue;
+        }
+
+        .aviso-duracion {
+            font-size: 1.2em;
+            color: #ffa500;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5em;
+            }
+
+            h2 {
+                font-size: 1.5em;
+            }
+
+            hr {
+                width: 70%;
+            }
+
+            label {
+                font-size: 1em; /* Ajusta el tamaño del texto para pantallas medianas */
+            }
+
+            .boton-continuar {
+                width: 80%;
+                padding: 15px 0;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.3em;
+            }
+
+            hr {
+                width: 90%;
+            }
+
+            label {
+                font-size: 0.9em; /* Ajusta el tamaño del texto para pantallas pequeñas */
+                margin-bottom: 6px; /* Menos separación en pantallas pequeñas */
+            }
+
+            .boton-continuar {
+                width: 90%;
+                padding: 16px 0;
+                font-size: 1.2em;
+            }
+
+            .aviso-duracion {
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center;">Bienvenido/a al Experimento de percepción numérica</h1>
+    <h2 style="text-align: center;">Laboratorio de Neurociencias de la Universidad Torcuato Di Tella</h2>
+    <hr/>
+    <div style="text-align: center;">
+        <p style="display: inline-block; text-align: justify; max-width: 700px;">
+            Gracias por elegir participar en nuestro experimento online. Tu participación es voluntaria y podrás abortarlo en cualquier momento. Todos los datos serán anónimos y utilizados exclusivamente con fines de investigación. Al presionar en "Acepto las condiciones" estarás confirmando que:
+        </p>
+        <ul style="text-align: left; list-style-position: inside; max-width: 450px; margin: auto;">
+            <li>Tenés más de 18 años.</li>
+            <li>Aceptas participar en el estudio.</li>
+            <li>Te comprometes a seguir las instrucciones del experimento.</li>
+        </ul>
+        <p> </p>
+        <p class="aviso-duracion">Considerá que la duración aproximada del experimento es de 40 minutos.</p>
+    </div>
+    <form method="post" style="text-align: center;">
+        {% csrf_token %}
+        <label for="participant_id"></label>
+        <button class="boton-continuar" type="submit">Acepto las condiciones</button>
+    </form>
+</body>
+</html>
+
+

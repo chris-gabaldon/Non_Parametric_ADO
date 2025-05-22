@@ -1,0 +1,157 @@
+<!-- experimento/templates/experimento/finish_experiment.html -->
+
+<!DOCTYPE html>
+<html>
+{% load static %}
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
+    <title>Fin del Experimento</title>
+    <style>
+        :root {
+            font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+            line-height: 1.5;
+            font-weight: 400;
+            color-scheme: light dark;
+            color: rgba(255, 255, 255, 0.87);
+            background-color: #111111;
+            font-synthesis: none;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-width: 320px;
+            min-height: 100vh;
+            background-color: #222133;
+            color: rgba(255, 255, 255, 0.87);
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 3.2em;
+            line-height: 1.1;
+            color: #fff;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 1.8em;
+            color: #ddd;
+            margin-bottom: 40px;
+        }
+
+        hr {
+            width: 50%;
+            border-color: #535bf2;
+            margin-bottom: 40px;
+        }
+
+        @media (min-width: 481px) and (max-width: 768px) {
+            h1 {
+                font-size: 2.5em;
+            }
+
+            h2 {
+                font-size: 1.5em;
+            }
+
+            hr {
+                width: 70%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.3em;
+            }
+
+            hr {
+                width: 90%;
+            }
+
+            p.mail {
+                white-space: nowrap;
+            }
+
+        }
+
+    </style>
+</head>
+<body>
+    <h1>Gracias por participar en el experimento.</h1>
+    <h2>Laboratorio de Neurociencias de la Universidad Torcuato Di Tella</h2>
+    <h2><span style="color: rgb(230, 230, 129);">¡Respondiste correctamente <span id="corr-trial">{{ corr_trial }}</span> tareas!</span></h2>
+    <h3>En el transcurso de los próximos días, nos pondremos en contacto para que puedas retirar un obsequio por haber finalizado el experimento.</h3>
+    <hr/>
+    <h3>Contactate con nosotros por cualquier inquietud</h3>
+    <p style="text-align: center;">Universidad Torcuato Di Tella. Av. Figueroa Alcorta 7350, Ciudad Autónoma de Buenos Aires, Argentina</p>
+    <p style="text-align: center;">email: c_gabaldon@outlook.com </p>
+    <p style="text-align: center;"><a href="https://www.utdt.edu/ver_contenido.php?id_contenido=10518&id_item_menu=20132" target="_blank" style="color: rgb(230, 230, 129); text-decoration: none;">Si querés obtener más información acerca de nosotros, presiona acá para visitar nuestra página web.</a>
+
+<script>
+	function getCookie(name) {
+        	    let cookieValue = null;
+            	if (document.cookie && document.cookie !== '') {
+                	const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    // Coloca aquí todo el código JavaScript
+    const csrftoken = getCookie('csrftoken');
+    
+    async function sendResponse(response) {
+        
+        console.log('called sendResponse from finish_experiment.html')
+        const trial = trials[currentTrial];
+        const reactionTime = 1.0;
+
+        await fetch('/save_response/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken,
+            },
+            body: JSON.stringify({
+                'trial_id': trial.id,
+                'response': response,
+                'reaction_time': reactionTime,
+            }),
+        });
+
+        // Más lógica de respuesta
+    }
+
+    // Definición de la función showNumbers
+    async function showNumbers(numbers, displayTime, interTime) {
+        for (let numero of numbers) {
+            document.getElementById('stimulus').innerText = numero;
+            await new Promise(resolve => setTimeout(resolve, displayTime * 1000));
+            document.getElementById('stimulus').innerText = '';
+            await new Promise(resolve => setTimeout(resolve, interTime * 1000));
+        }
+    }
+
+    // Resto del código JavaScript
+</script>
+</body>
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+    {% load static %}
+    
+    <head>
+        <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Iniciar Experimento</title>
+        <style>
+            :root {
+                font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+                line-height: 1.5;
+                font-weight: 400;
+                color-scheme: light dark;
+                color: rgba(255, 255, 255, 0.87);
+                background-color: #111111;
+                font-synthesis: none;
+                text-rendering: optimizeLegibility;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+            }
+    
+            body {
+                margin: 0;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                min-width: 320px;
+                min-height: 100vh;
+                background-color: #222133;
+                color: rgba(255, 255, 255, 0.87);
+                text-align: center;
+                padding: 20px;
+            }
+    
+            .container {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                max-width: 800px;
+            }
+    
+            h2 {
+                font-size: 1.8em;
+                color: rgba(255, 255, 255, 0.87);
+                margin-bottom: 20px;
+            }
+    
+            ul {
+                text-align: justify;
+                list-style-position: inside;
+                margin: 0;
+                padding: 0;
+                width: 100%;
+            }
+    
+            li {
+                margin-bottom: 15px;
+            }
+    
+            hr {
+                width: 50%;
+                border-color: #535bf2;
+                margin-bottom: 40px;
+            }
+    
+            .boton-continuar {
+                background-color: blue;
+                color: rgba(255, 255, 255, 0.87);
+                padding: 15px 35px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: background-color 0.3s;
+            }
+    
+            .boton-continuar:hover {
+                background-color: darkblue;
+            }
+    
+            @media (max-width: 768px) {
+                h2 {
+                    font-size: 1.5em;
+                }
+                hr {
+                    width: 70%;
+                }
+                .boton-continuar {
+                    width: 80%;
+                    padding: 30px 0;
+                }
+            }
+    
+            @media (max-width: 480px) {
+                h2 {
+                    font-size: 1.3em;
+                }
+                hr {
+                    width: 90%;
+                }
+                .boton-continuar {
+                    width: 120%;
+                    padding: 20px 0;
+                    font-size: 1.2em;
+                }
+            }
+        </style>
+    </head>
+<body>
+    <div class="container">
+        <h2>Instrucciones del experimento de percepción numérica</h2>
+	<p style="text-align: center;"><strong>Por favor lee con atención:</strong></p>
+        <ul>
+            <li>El experimento evaluará tu capacidad para <span style="color: rgb(230, 230, 129);">estimar promedios</span> de conjuntos de números. El promedio se calcula sumando todos los números y dividiendo el resultado entre la cantidad de números (por ejemplo, el promedio de 10 y 4 es 7).</li>
+            <li>El experimento consiste en 10 bloques, cada uno con 20 tareas, sumando un total de <span style="color: rgb(230, 230, 129);">200 tareas</span>.</li>
+            <li>En cada tarea, se te mostrará una serie de números en el centro de la pantalla <span style="color: rgb(230, 230, 129);">(de a uno a la vez)</span>. Luego, deberás indicar presionando un botón, si el promedio de esos números es <span style="color: rgb(230, 230, 129);">mayor</span> o <span style="color: rgb(230, 230, 129);">menor</span> que <span style="color: rgb(230, 230, 129);">50</span>.</li>
+	    <li>Luego de responder, el botón se tornará de color <span style="color: rgb(138, 245, 247);">celeste</span>, indicando que se guardó tu respuesta. Después, deberás presionar un botón que indica "Reanudar", lo cual te permitirá descansar entre cada tarea.</li>
+            <li>Se espera que <span style="color: #ffa500;">respondas intuitivamente</span>, sin usar calculadoras ni realizar cálculos precisos.</li>
+            <li>Se recomienda tomar <span style="color: rgb(230, 230, 129);">al menos un minuto de descanso</span> entre bloques de 20 tareas para evitar la fatiga y mejorar tu rendimiento.</li>
+            <li>Al finalizar el experimento podrás escribir tu correo electrónico para que nos pongamos en contacto para entregarte un obsequio 🎁.</li>
+        </ul>
+        <p>Presiona el botón <span style="color: rgb(230, 230, 129);">"Comenzar"</span> para iniciar el primer bloque de tareas. Asegúrate de estar en un lugar tranquilo y recordá que el experimento dura aproximadamente 40 minutos.</p>
+        <p>¡Mucha suerte!</p>
+        <hr/>
+        <div style="text-align: center;">
+            <button class="boton-continuar" onclick="startExperiment()"><span style="color: rgb(230, 230, 129);">Comenzar</span></button>
+        </div>
+    </div>
+    
+    
+
+    <script>
+        function startExperiment() {
+            window.location.href = `/block/{{ session_id }}/1/`;
+        }
+    </script>
+</body>
+</html>
+
+
