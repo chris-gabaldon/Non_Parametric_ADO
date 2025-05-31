@@ -28,6 +28,7 @@ for trials in list_trials:
         aux = np.linspace(0, expan, n) # design points
         
         if prior_type=='logistic':
+            expan=300
             prior = Prior() 
             p = prior.set_prior_logis(expan,n,k) 
             exp.set_prior(p) # set the bins priors as the one calculated above 
