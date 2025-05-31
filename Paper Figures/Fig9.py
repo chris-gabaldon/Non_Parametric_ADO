@@ -25,9 +25,10 @@ for prior_type in prior_types:
         
         if prior_type=='logistic':
             prior = Prior() 
+            expan=300
             p = prior.set_prior_logis(expan,n,k) 
             exp.set_prior(p) # set the bins priors as the one calculated above 
-            true = 1/(1 + np.exp(-0.01*(aux-400 +  100))) #logis
+            true = 1/(1 + np.exp(-0.01*(aux-200 +  100))) #logis
         elif prior_type=='powerlaw':
             prior = Prior() 
             p = prior.set_prior_pow(expan,n,k)
