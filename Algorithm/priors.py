@@ -72,7 +72,7 @@ class Prior:
         aux = np.linspace(0, expan, n)
         
         for i in range(ab_n):
-            true = (k-1)/(1 + np.exp(-0.1*random.random()*(aux-200 +  300*random.random())))
+            true = (k-1)/(1 + np.exp(-0.1*random.random()*(aux-100 +  200*random.random())))
             for iii in range(n):
                 p[iii,round(true[iii])] += 1/ab_n        
         p = n * p/p.sum()
