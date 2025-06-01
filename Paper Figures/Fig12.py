@@ -8,6 +8,7 @@ Created on Sun May  4 16:28:27 2025
 from ADO_Experiment import *
 import random
 import matplotlib.pyplot as plt
+
 import numpy as np
 from priors import *
 
@@ -38,11 +39,11 @@ def generate_trueS(realizations,prior_type):
              true = 1 - (a_pow*(aux + 1)**-b_pow)
          
          elif prior_type=='logis':
-             true = 1/(1 + np.exp(-0.1*random.random()*(aux-200 +  300*random.random()))) #logis
+             true = 1/(1 + np.exp(-0.1*random.random()*(aux-200 +  100*random.random()))) #logis
          
          elif prior_type=='cuadra':
              true =   random.random()*(aux/expan)**2 #cuadra
-         # true[true>1] = 1
+             true[true>1] = 1
          
          elif prior_type=='gauss':
  
@@ -67,7 +68,7 @@ def MSEvsK(k, trials, realizations, trueS): # repeats is the number of trials an
 
     if prior_type=='logis':
         prior = Prior() 
-        expan=500
+        expan=300
         p = prior.set_prior_logis(expan,n,k) 
         exp.set_prior(p) # set the bins priors as the one calculated above 
     elif prior_type=='pow':
@@ -182,8 +183,8 @@ def MSEvsK(k, trials, realizations, trueS): # repeats is the number of trials an
 # =============================================================================
 
 
-# list_priors=['exp','pow','logis','cuadra','gauss']
-list_priors=['logis','gauss']
+list_priors=['exp','pow','logis','cuadra','gauss']
+# list_priors=['logis']
 
 for prior_type in list_priors: 
     
@@ -200,7 +201,7 @@ for prior_type in list_priors:
 
     if prior_type=='logis':
         prior = Prior() 
-        expan=500
+        expan=300
         p = prior.set_prior_logis(expan,n,k_prov) 
         exp.set_prior(p) # set the bins priors as the one calculated above 
     elif prior_type=='pow':
@@ -321,12 +322,24 @@ for prior_type in list_priors:
         designs.append(aux1)    
         MSEs_rand[:,jj,ii] = MSE
         xs[:,jj,ii] = x
-  
+    
     mse_random=np.mean([MSEs_rand[:,1][-1]])
     error_mse_random=np.std(MSEs_rand[:,1][-1])/np.sqrt(ind)
     plt.axhline(mse_random,linestyle='--',color='k',label='Random K=200')
     plt.axhline(mse_random-error_mse_random,color='grey')
     plt.axhline(mse_random+error_mse_random,color='grey')
+    
+    filename = f"mse_resultados_{prior_type}.txt"
+
+    with open(filename, "w") as f:
+        f.write("k\tMSE\tError\n")
+        for k, mse, err in zip(ks, MSEmeans, MSEstds):
+            f.write(f"{k}\t{mse}\t{err}\n")
+        f.write("\n# MSE random\n")
+        f.write(f"MSE_random\t{mse_random}\n")
+        f.write(f"Error_random\t{error_mse_random}\n")
+        
+    
     plt.show()
 
 
