@@ -1,7 +1,7 @@
-
 from ADO_Experiment import *
 import random
 import matplotlib.pyplot as plt
+# import matplotlib
 import numpy as np
 from priors import *
 
@@ -32,13 +32,12 @@ def generate_trueS(n,realizations,prior_type):
          
          elif prior_type=='logis':
              true = 1/(1 + np.exp(-0.1*random.random()*(aux-200 +  100*random.random()))) #logis
-         
+             
          elif prior_type=='cuadra':
-             true =   random.random()*(aux/expan)**2 #cuadra
+             true = random.random() + random.random()*(2*aux/expan)**2 #cuadra
              true[true>1] = 1
          
          elif prior_type=='gauss':
- 
              mu = 0 
              sigma = np.random.uniform(expan/10, expan/5) 
              true = 1-np.exp(-0.5 * ((aux - mu) / sigma) ** 2)  
@@ -113,6 +112,7 @@ def MSEvsn(n, trials, realizations, trueS,prior_type): # repeats is the number o
             estimated = estimated.sum(axis = 1)
             err = estimated - true
             aux_err = np.mean(err*err)
+            
             MSE.append(aux_err)
         MSEs[:,ii] = MSE
         designs[:,ii] = design
@@ -129,7 +129,7 @@ def MSEvsn(n, trials, realizations, trueS,prior_type): # repeats is the number o
         aux_err = np.mean(err*err)
         MSEs_frec[ii] = aux_err
         
-    return MSEs_frec.mean(), MSEs_frec.std()/np.sqrt(realizations), designs, results
+    return MSEs.mean(axis = 1)[-1], MSEs.std(axis = 1)[-1]/np.sqrt(realizations)\
 
 
 # =============================================================================
@@ -137,10 +137,14 @@ def MSEvsn(n, trials, realizations, trueS,prior_type): # repeats is the number o
 # =============================================================================
 
 list_priors=['exp','pow','logis','cuadra','gauss']
+
+
 for prior_type in list_priors: 
     print('Prior type=',prior_type)
-
-    expan = 1000
+    if prior_type=='logis': # to be consistent with the logistic prior constructed in prior.py 
+        expan=300
+    else:
+        expan = 1000
     k = 100
     
     ### 
@@ -156,6 +160,7 @@ for prior_type in list_priors:
     realizations = 320
     ns = [2,5,10,20]
 
+
     for n in ns:
         print('\nSimulating for n=', n)
         trueS = generate_trueS(n,realizations,prior_type)
@@ -164,8 +169,8 @@ for prior_type in list_priors:
         MSEmeans.append(simulation[0])    
         MSEstds.append(simulation[1])
 
-        All_designs.append(simulation[2])
-        All_results.append(simulation[3])
+        # All_designs.append(simulation[2])
+        # All_results.append(simulation[3])
         
         print( n, simulation[0], simulation[1]) 
 
