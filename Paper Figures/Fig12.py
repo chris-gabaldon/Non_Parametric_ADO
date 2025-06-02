@@ -4,7 +4,6 @@ Created on Sun May  4 16:28:27 2025
 
 @author: C_Gab
 """
-
 from ADO_Experiment import *
 import random
 import matplotlib.pyplot as plt
@@ -189,8 +188,10 @@ list_priors=['exp','pow','logis','cuadra','gauss']
 for prior_type in list_priors: 
     
     print('Prior type=',prior_type)
-
-    expan = 1000
+    if prior_type=='logis':
+        expan=300
+    else:
+        expan = 1000
     n = 10 
 
     k_prov = 200    
@@ -265,7 +266,11 @@ for prior_type in list_priors:
     # =============================================================================
     
     
-    expan = 1000 # the final time
+    
+    if prior_type=='logis': # to be consistent with the logistic prior constructed in priors.py
+        expan=300
+    else:
+        expan = 1000
     n = 10 # number of design points
     k=200
     
