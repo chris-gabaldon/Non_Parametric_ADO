@@ -15,20 +15,21 @@ import numpy as np
 
 list_trials=[300,3000]
 prior_types=['exponential','logistic','powerlaw','quadratic']
-expan = 1000 # the final time
 n = 10 # number of design points
 k = 100 # number of likelihood points
 for trials in list_trials:
     for prior_type in prior_types:
         print("Initializing experiment ",prior_type)
         print("")
-        
+        if prior_type=='logistic': # to be consistent with the prior constructed in priors.py
+            expan=300
+        else:
+            expan = 1000
         exp = Experiment()
         exp.generate(n,k) # generate the bins priors considering all monotonic curves equally probable
         aux = np.linspace(0, expan, n) # design points
         
         if prior_type=='logistic':
-            expan=300
             prior = Prior() 
             p = prior.set_prior_logis(expan,n,k) 
             exp.set_prior(p) # set the bins priors as the one calculated above 
