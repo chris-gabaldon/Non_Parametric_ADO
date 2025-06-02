@@ -12,7 +12,10 @@ prior_types=['logistic','powerlaw','quadratic']
 for prior_type in prior_types:
     list_trials=[0,300,3000]
     for trials in list_trials:
-        expan = 1000 # the final time
+        if prior_type=='logistic': # to be consistent with the prior constructed in priors.py
+            expan=300
+        else:
+            expan = 1000
         n = 10 # number of design points
         k = 100 # number of likelihood points
         
@@ -25,7 +28,6 @@ for prior_type in prior_types:
         
         if prior_type=='logistic':
             prior = Prior() 
-            expan=300
             p = prior.set_prior_logis(expan,n,k) 
             exp.set_prior(p) # set the bins priors as the one calculated above 
             true = 1/(1 + np.exp(-0.01*(aux-200 +  100))) #logis
