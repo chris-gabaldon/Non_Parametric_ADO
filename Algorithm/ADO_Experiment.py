@@ -22,16 +22,16 @@ class Experiment:
         delta = 1/k
         v = [delta/2+i*delta for i in range(k)]
         
-        p = np.zeros((n,k)) # this is the array G in the pseudo-code in figure 3 
-        x = np.ones(k) # this is the vector V in the pseudo-code in figure 3
-        tri = np.triu(np.ones((k,k))) # this is the H matrix in figure 3
+        p = np.zeros((n,k)) # this is the array G in the pseudo-code in figure pseudocode 
+        x = np.ones(k) # this is the vector V in the pseudo-code in figure pseudocode
+        tri = np.triu(np.ones((k,k))) # this is the H matrix in figure pseudocode
 
-        for i in range(n): # this is the for loop in figure 3
+        for i in range(n): # this is the for loop in figure pseudocode
             p[i] = x
             x = x @ tri
 
         self.factor = p
-        self.ffactor = np.flip(p) # array J in figure 3
+        self.ffactor = np.flip(p) # array J in figure pseudocode
 
         p = self.ffactor * p # numbers of models passing by each point n,k
 
@@ -241,7 +241,19 @@ class Experiment:
         aux = aux[0]
         groundtruth[i + 1] = aux
         
-        return groundtruth
+        return groundtruth/self.k
+    
+    def getRandomModel2(self):
+        groundtruth = np.zeros(self.n,dtype=int)
+        aux = random.choices(range(self.k), weights=self.p[0])[0] #first colunm of the heatmap
+        groundtruth[0] = aux
+    
+        for i in range(1, self.n): #subsequent colunms, imposing monotonicity
+            aux = random.choices(range(aux, self.k),weights=self.p[i, aux:self.k])[0]
+            groundtruth[i] = aux
+        
+            
+        return self.values[groundtruth]
     
    # calculate the bins prior that would result from 
    # a given result witt likelihood v at a given design point 
@@ -326,4 +338,5 @@ class Experiment:
     # calculate the normalized info gain
     def infoProgress(self):
         return self.infoGained() / self.initialEntropy
+    
     
