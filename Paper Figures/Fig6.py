@@ -1,20 +1,44 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Sat May  3 01:55:34 2025
-
-@author: C_Gab
-"""
 
 from ADO_Experiment import *
 from priors import *
 
 import random
 import matplotlib.pyplot as plt
-import matplotlib
-import numpy as np
 
-list_trials=[300,3000]
-prior_types=['exponential','logistic','powerlaw','quadratic']
+import numpy as np
+import scipy.stats
+
+def get_ground_truth(expan, n, k, curve_type):
+    aux = np.linspace(0, expan, n)
+    if curve_type == "expo":
+        a_exp = np.random.beta(2, 1)
+        b_exp = np.random.beta(1, 80)
+        true = 1 - a_exp* np.exp(-aux*b_exp) 
+        
+    elif curve_type == "powerlaw":
+        a_exp = np.random.beta(2, 1)
+        b_exp = np.random.beta(1, 4)
+        true = 1 - a_exp*(aux + 1)**-b_exp
+
+    elif curve_type == "logistic":
+
+        slope = 0.1*random.random()
+        center = -100 + 200*random.random()
+        true = 1/(1 + np.exp(-slope*(aux-center)))
+        
+    elif curve_type == "quadratic":
+        a=random.random()
+        b=random.random()
+        true = a + b*(2*aux/expan)**2 
+        true[true>1] = 1 
+
+    return true
+
+
+
+list_trials=[300]
+prior_types=['quadratic','logistic','expo','powerlaw']
 n = 10 # number of design points
 k = 100 # number of likelihood points
 for trials in list_trials:
@@ -54,7 +78,7 @@ for trials in list_trials:
         p_prior = exp.p.copy() 
         mat_prior = exp.mat.copy()
         invmat_prior = exp.invmat.copy()
-        ind =  320 # number of runs used to average the MSE vs. trial curve
+        ind = 320 # number of runs used to average the MSE vs. trial curve
         xs = np.zeros(shape=(trials+1, 2,ind)) # to store each trial number
         MSEs = np.zeros(shape=(trials+1,2,ind)) # to store the MSE vs trials values
         infoGained = np.zeros(shape=(trials+1,2,ind)) # to store the information gained vs trials values
@@ -70,13 +94,16 @@ for trials in list_trials:
                 print("")
             for ii in range(ind): 
                 print("run number:",ii)
+                
                 exp.reset()
-                exp.set_prior_mat(p_prior, mat_prior, invmat_prior)      
+                exp.set_prior_mat(p_prior, mat_prior, invmat_prior) 
+                
+                true=get_ground_truth(expan, n, k, prior_type)
                 x = [0]
                 y = []
-                true=exp.getRandomModel()/k
                 estimated = exp.values*exp.p
                 estimated = estimated.sum(axis = 1) # estimated model at the begining
+
                 err = estimated - true
                 aux_err = np.mean(err*err) # error at the begining
                 MSE = [aux_err]
@@ -97,6 +124,7 @@ for trials in list_trials:
                     x.append(i+1)
                     estimated = exp.values*exp.p
                     estimated = estimated.sum(axis = 1)
+                    # estimated=exp.values[np.argmax(exp.p,axis=1)] # for prior logis activate this line to reproduce paper figure
                     err = estimated - true
                     aux_err = np.mean(err**2)
                     MSE.append(aux_err)
@@ -108,16 +136,17 @@ for trials in list_trials:
                 infoGained[:,jj,ii] = info
          
         #### Visualization
-        colors = ["green", "blue"]
-        stratName = ["ADO","Random"]
+        colors = ["blue", "red"]
+        stratName = ["NADO","Random"]
         # plot MSE vs trial
         plt.figure(2)
         for i in range(2):
             plt.title(f'prior:{prior_type} , {trials} trials')
             plt.errorbar(xs[:,i].mean(axis = 1), np.log10(MSEs[:,i].mean(axis = 1)), yerr=0.434* MSEs[:,i].std(axis = 1)/MSEs[:,i].mean(axis = 1)/np.sqrt(ind), label=stratName[i],c=colors[i])
-            plt.xlabel('Trial', fontsize=14)
-            plt.ylabel('MSE', fontsize=14)
-            plt.legend(stratName)
+            plt.xlabel('trial', fontsize=16)
+            plt.ylabel('MSE', fontsize=16)
+            plt.tick_params(axis='both', labelsize=14)
+            plt.legend(stratName, fontsize=14)
         plt.show()
             
         # plot information gain vs trial    
@@ -125,7 +154,9 @@ for trials in list_trials:
         for i in range(2):
             plt.title(f'prior:{prior_type} , {trials} trials')
             plt.errorbar(xs[:,i].mean(axis = 1), infoGained[:,i].mean(axis = 1), yerr=infoGained[:,i].std(axis = 1)/np.sqrt(ind), label=stratName[i],c=colors[i])
-            plt.xlabel('Trial', fontsize=14)
-            plt.ylabel('InfoGained', fontsize=14)
-            plt.legend(stratName)
+            plt.xlabel('trial', fontsize=16)
+            plt.ylabel('information gained', fontsize=16)
+            plt.tick_params(axis='both', labelsize=14)
+
+            plt.legend(stratName, fontsize=14)
         plt.show()
