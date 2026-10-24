@@ -96,9 +96,11 @@ for trials in list_trials:
     plt.ylabel('Probability', fontsize=14)
     plt.title(f'{trials} trials')
     plt.show()
+
+    # histogram of the selected designs
     plt.title(f'{trials} trials')
     vals, counts = np.unique(aux[designs], return_counts=True)
-    plt.bar(vals, counts, width=75, align='center',edgecolor='k',color='blue')  # ajustá el width si hace falta
+    plt.bar(vals, counts, width=75, align='center',edgecolor='k',color='blue')  # 
     plt.xticks(vals)
     plt.xlabel('Design')
     plt.ylabel('Ocurrences')
