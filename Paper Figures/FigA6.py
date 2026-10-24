@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
       
+
 from ADO_Experiment import *
 from priors import *
 
@@ -9,7 +10,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import scipy.stats
 
-def get_ground_truth(expan, n, k, curve_type):
+def get_ground_truth(expan, n, k, curve_type): # this function generate the ground-truth curves from each parametric form, to run the simulations
     aux = np.linspace(0, expan, n)
     if curve_type == "exponential":
         a_exp = np.random.beta(2, 1)
@@ -32,10 +33,6 @@ def get_ground_truth(expan, n, k, curve_type):
         b=random.random()
         true = a + b*(2*aux/expan)**2 
         true[true>1] = 1 
-    
-    elif curve_type == "gaussian":
-        #gaussian: in this particular case we sample one of the curves enabled by the chosen discretization
-        true = exp.getRandomModel2()
 
     return true
 
@@ -95,8 +92,12 @@ def MSEvsK(k, trials, ind, expan, curve_type): # trials is the number of trials 
         print('\rRealization number: ' + str(ii), end='', flush=True)
         exp.reset()
         exp.set_prior_mat(p_prior, mat_prior, invmat_prior)
-
-        true = get_ground_truth(expan, n, k, curve_type)
+        
+        if curve_type=='gaussian': #gaussian: in this particular case we sample one of the curves enabled by the chosen discretization
+            true=exp.getRandomModel2()
+        else:
+            true = get_ground_truth(expan, n, k, curve_type)
+        
         
         trueS[:,ii] = true # save for later use                          
 
@@ -175,7 +176,7 @@ ind = 2
 trials = 3
 n = 10
 ks = [2,5,10,20,40,100,200]
-prior_types=['logistic','powerlaw','quadratic','gaussian','exponential']
+prior_types=['gaussian','logistic','powerlaw','quadratic','gaussian','exponential']
 
 for curve_type in prior_types:
     MSEmeans = []
@@ -234,5 +235,4 @@ for curve_type in prior_types:
     # MSEstds = data['error_nado']
     # MSErandom = data['mse_random']
     # MSErandomStd = data['error_random']
-
 
