@@ -172,8 +172,8 @@ def MSEvsK(k, trials, ind, expan, curve_type): # trials is the number of trials 
                 MSEs.mean(axis=1)[-1],
                 MSEs.std(axis=1)[-1] / np.sqrt(ind))
     
-ind = 2
-trials = 3
+ind = 320
+trials = 300
 n = 10
 ks = [2,5,10,20,40,100,200]
 prior_types=['gaussian','logistic','powerlaw','quadratic','gaussian','exponential']
