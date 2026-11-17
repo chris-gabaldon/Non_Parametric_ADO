@@ -91,9 +91,7 @@ for jj in range(2): # to perform the simulations first choosing designs accordin
                 plt.ylabel('Probability', fontsize=14)
                 plt.title(f'{i+1} trials')
                 plt.show()
-                   
-        aux1 = exp.ADOchoose()  
-        designs.append(aux1)    
+                     
         MSEs[:,jj,ii] = MSE
         xs[:,jj,ii] = x
         infoGained[:,jj,ii] = info
