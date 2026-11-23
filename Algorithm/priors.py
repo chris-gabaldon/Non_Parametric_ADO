@@ -77,7 +77,7 @@ class Prior:
                 p[iii,round(true[iii])] += 1/ab_n        
         p = n * p/p.sum()
         
-        return p  
+        return p    
     
     
     def set_prior_cuadra(self,expan,n,k): # create a prior based on quadratic curves
@@ -96,7 +96,7 @@ class Prior:
                 p[iii,round(true[iii])] += 1/ab_n        
         p = n * p/p.sum()
         
-        return p  
+        return p   
     
     
     def set_prior_gauss(self,expan,n,k): # create a prior based gaussian distributions at each design point
