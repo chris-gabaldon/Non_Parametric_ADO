@@ -142,7 +142,7 @@ for curve_type in prior_types:
     for n in ns:
         print('\n\nStarting simulation using D =', n)
     
-        simulation = MSEvsD(k, trials, ind, expan,curve_type)
+        simulation = MSEvsD(n, trials, ind, expan,curve_type)
     
         MSEmeans.append(simulation[0])
         MSEstds.append(simulation[1])  
@@ -171,6 +171,3 @@ for curve_type in prior_types:
     # ns = data['list_ns']
     # MSEmeans = data['mse_nado']
     # MSEstds = data['error_nado']
-
-    
-    
