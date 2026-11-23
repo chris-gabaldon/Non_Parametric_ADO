@@ -1,5 +1,3 @@
-
-
 from ADO_Experiment import *
 from priors import *
 
@@ -24,13 +22,18 @@ for prior_type in prior_types:
         
         exp = Experiment()
         exp.generate(n,k) # generate the bins priors considering all monotonic curves equally probable
-        aux =  np.array(range(50,1000,100)) # design points
         
+        if prior_type=='logistic': # to be consistent with the prior constructed in priors.py
+            aux =  np.array(range(0,300,30)) # design points
+        else:
+            aux =  np.array(range(50,1000,100)) # design points
+            
         if prior_type=='logistic':
             prior = Prior() 
             p = prior.set_prior_logis(expan,n,k) 
             exp.set_prior(p) # set the bins priors as the one calculated above 
-            true = 1/(1 + np.exp(-0.01*(aux-200 +  100))) #logis
+            true = 1/(1 + np.exp(-0.08*(aux-200 +  100))) #logis
+            
         elif prior_type=='powerlaw':
             prior = Prior() 
             p = prior.set_prior_pow(expan,n,k)
@@ -116,5 +119,3 @@ for prior_type in prior_types:
         plt.ylabel('Probability', fontsize=14)
         plt.title(f'{trials} trials, prior :{prior_type}')
         plt.show()
-        
-  
